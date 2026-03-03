@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>CivicAI — Plateforme d’Analyse de Documents</title>
-    <!-- Lien vers Font Awesome pour les icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
@@ -56,6 +55,22 @@
             color: #34495e;
             margin-bottom: 10px;
         }
+        .examples {
+            margin-top: 20px;
+        }
+        .examples button {
+            margin: 5px 10px 5px 0;
+            padding: 8px 15px;
+            font-size: 0.9em;
+            background-color: #e8f0fe;
+            color: #1a73e8;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .examples button:hover {
+            background-color: #cfe0fc;
+        }
         .analyze-section {
             background: #fff;
             padding: 30px;
@@ -72,7 +87,7 @@
             border: 1px solid #ccc;
             resize: vertical;
         }
-        button {
+        button.submit-btn {
             padding: 12px 25px;
             margin-top: 15px;
             background-color: #1a73e8;
@@ -83,8 +98,22 @@
             cursor: pointer;
             font-size: 1em;
         }
-        button:hover {
+        button.submit-btn:hover {
             background-color: #1558b0;
+        }
+        .loader {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .loader i {
+            font-size: 40px;
+            color: #1a73e8;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         .result {
             margin-top: 30px;
@@ -122,27 +151,40 @@
         <div class="card">
             <i class="fas fa-file-alt"></i>
             <h3>Résumé Automatique</h3>
-            <p>Obtenez un résumé clair et concis de vos documents ou tickets volumineux pour gagner du temps et prendre les bonnes décisions rapidement.</p>
+            <p>Obtenez un résumé clair et concis de vos documents ou tickets volumineux.</p>
         </div>
         <div class="card">
             <i class="fas fa-tags"></i>
             <h3>Classification Intelligente</h3>
-            <p>Classez vos documents en catégories pertinentes (Incident, Réclamation client, Demande administrative, Problème réseau…) automatiquement et de façon fiable.</p>
+            <p>Classez vos documents en catégories pertinentes de façon automatique et fiable.</p>
         </div>
         <div class="card">
             <i class="fas fa-key"></i>
             <h3>Extraction de Mots-clés</h3>
-            <p>Identifiez instantanément les 5 mots-clés essentiels de chaque document ou ticket pour une lecture rapide et efficace.</p>
+            <p>Identifiez instantanément les 5 mots-clés essentiels pour une lecture rapide et efficace.</p>
         </div>
     </div>
 
     <div class="analyze-section">
         <h2>Essayez CivicAI maintenant</h2>
-        <form method="post" action="/analyze">
-            <textarea name="text" placeholder="Collez ici un rapport, ticket client, log technique...">{{ original_text or "" }}</textarea>
+
+        <div class="examples">
+            <p><strong>Exemples de texte :</strong></p>
+            <button onclick="fillExample(1)">Réclamation client courte</button>
+            <button onclick="fillExample(2)">Ticket technique moyen</button>
+            <button onclick="fillExample(3)">Rapport administratif simple</button>
+        </div>
+
+        <form method="post" action="/analyze" onsubmit="showLoader()">
+            <textarea id="textInput" name="text" placeholder="Collez ici un rapport, ticket client, log technique...">{{ original_text or "" }}</textarea>
             <br>
-            <button type="submit">Analyser</button>
+            <button type="submit" class="submit-btn">Analyser</button>
         </form>
+
+        <div class="loader" id="loader">
+            <i class="fas fa-spinner"></i>
+            <p>Analyse en cours, veuillez patienter…</p>
+        </div>
 
         {% if summary %}
         <div class="result">
@@ -166,6 +208,21 @@
     </div>
     <p>&copy; 2026 CivicAI — Plateforme d'analyse de documents</p>
 </footer>
+
+<script>
+function showLoader() {
+    document.getElementById('loader').style.display = 'block';
+}
+
+function fillExample(num) {
+    const examples = {
+        1: "Objet : Problème de facturation\nBonjour, nous avons constaté une anomalie sur la dernière facture. Merci de vérifier et corriger.\nCordialement, Marie Dupont",
+        2: "Ticket : Incident réseau\nLe serveur X ne répond plus depuis 15h. Vérifier la connectivité et relancer le service.\nMerci, Support IT",
+        3: "Rapport administratif\nLe projet Alpha a été finalisé avec 3 jours de retard. Voir les actions correctives et mise à jour du planning.\nDirection"
+    };
+    document.getElementById('textInput').value = examples[num];
+}
+</script>
 
 </body>
 </html>
